@@ -1,14 +1,13 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:comicstore;DB_CLOSE_DELAY=-1
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:oracle:thin:@//localhost:1522/FREEPDB1
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
   batch:
     jdbc:
-      initialize-schema: embedded
+      initialize-schema: always
     job:
       enabled: true
-    batch:
-      job:
-        enabled: true
