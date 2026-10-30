@@ -15,7 +15,13 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 public class ImportacaoPedidosQuadrinhosStepConfig {
     @Bean
-    public Step importacaoPedidosQuadrinhosStep(JobRepository jobRepository, PlatformTransactionManager transactionManager, ItemReader<Object> arquivoVendasQuadrinhosReader, ItemProcessor<Object, Object> vendasQuadrinhosClassifierProcessor, ItemWriter<Object> VendasQuadrinhosWriterConfig) {
+    public Step importacaoPedidosQuadrinhosStep
+            (JobRepository jobRepository,
+             PlatformTransactionManager transactionManager,
+             ItemReader<Object> arquivoVendasQuadrinhosReader,
+             ItemProcessor<Object, Object> vendasQuadrinhosClassifierProcessor,
+             ItemWriter<Object> VendasQuadrinhosWriterConfig) {
+
         return new StepBuilder("stepComicBooks", jobRepository)
                 .chunk(1000).transactionManager(transactionManager)
                 .reader(arquivoVendasQuadrinhosReader)

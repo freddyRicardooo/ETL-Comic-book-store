@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
 public class VendasQuadrinhosValidacaoProcessorConfig {
@@ -45,7 +46,7 @@ public class VendasQuadrinhosValidacaoProcessorConfig {
     // DELEGATE 1: só trata Pedido (duplicado + teto do frete)
     @Bean
     @StepScope
-    public ItemProcessor<Pedido, Pedido> pedidoValidacaoProcessor() {
+    public ItemProcessor<Pedido, Pedido> pedidoValidacaoProcessor(Set<String> pedidosAceitos) {
         Set<String> chavesProcessadas = new HashSet<>();
 
         ValidatingItemProcessor<Pedido> processor = new ValidatingItemProcessor<>();
@@ -58,7 +59,7 @@ public class VendasQuadrinhosValidacaoProcessorConfig {
                         "Frete acima do teto (%s) no pedido %s: %s",
                         FRETE_MAXIMO, pedido.getIdPedido(), pedido.getFrete()));
             }
-            if(pedido.getStatus().equalsIgnoreCase("COMPRA_RECUSADA") || pedido.getStatus().equalsIgnoreCase("NAO_ENTREGUE") || pedido.getStatus().equalsIgnoreCase("CANCELADA")) {
+            if(pedido.getStatus().equalsIgnoreCase("COMPRA_RECUSADO") || pedido.getStatus().equalsIgnoreCase("NAO_ENTREGUE") || pedido.getStatus().equalsIgnoreCase("CANCELADA") || pedido.getStatus().equalsIgnoreCase("COMPRA_RECUSADO"))  {
                 throw new ValidationException(String.format(
                         "Status de compra recusada ou não entregue: %s",
                         pedido.getStatus()
@@ -72,7 +73,9 @@ public class VendasQuadrinhosValidacaoProcessorConfig {
             if (pedido.getEmail().isEmpty() || pedido.getEmail() == null) {
                 throw new ValidationException(String.format("Email vazio ou nulo: %s", pedido.getEmail()));
             }
+            pedidosAceitos.add(pedido.getIdPedido());
         });
+
         processor.setFilter(true); // descarta em vez de falhar o step
         return processor;
     }
@@ -80,7 +83,7 @@ public class VendasQuadrinhosValidacaoProcessorConfig {
     // DELEGATE 2: só trata Items (duplicado + preço zerado)
     @Bean
     @StepScope
-    public ItemProcessor<Items, Items> itemValidacaoProcessor() {
+    public ItemProcessor<Items, Items> itemValidacaoProcessor(Set <String> pedidosAceitos) {
         Set<String> chavesProcessadas = new HashSet<>();
 
         ValidatingItemProcessor<Items> processor = new ValidatingItemProcessor<>();
@@ -89,8 +92,12 @@ public class VendasQuadrinhosValidacaoProcessorConfig {
             if (!chavesProcessadas.add(chave)) {
                 throw new ValidationException("Item duplicado: " + chave);
             }
-            if (items.getPrecoUnitario() == null || items.getPrecoUnitario().signum() == 0 || items.getPrecoUnitario().signum() <= 0) {
+            if (items.getPrecoUnitario() == null || items.getPrecoUnitario().signum() <= 0) {
                 throw new ValidationException("Preço zerado, ausente no item ou menor que 0 " + chave);
+            }
+
+            if (!pedidosAceitos.contains(items.getIdPedido())) {
+                throw new ValidationException("Item sem pedido válido (pedido descartado ou ausente): " + chave);
             }
 
         });
@@ -105,5 +112,11 @@ public class VendasQuadrinhosValidacaoProcessorConfig {
         BeanValidatingItemProcessor <Object> processor = new BeanValidatingItemProcessor<>();
         processor.setFilter(true);
         return processor;
+    }
+
+    @Bean
+    @StepScope
+    public Set<String> pedidosAceitos() {
+        return ConcurrentHashMap.newKeySet();
     }
 }

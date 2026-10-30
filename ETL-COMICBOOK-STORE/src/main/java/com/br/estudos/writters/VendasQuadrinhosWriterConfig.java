@@ -1,5 +1,6 @@
 package com.br.estudos.writters;
 
+import com.br.estudos.Dominio.Items;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.batch.infrastructure.item.ItemWriter;
 import org.springframework.batch.infrastructure.item.database.builder.JpaItemWriterBuilder;
