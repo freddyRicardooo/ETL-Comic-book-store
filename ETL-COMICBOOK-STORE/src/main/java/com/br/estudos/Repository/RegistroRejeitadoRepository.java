@@ -1,8 +1,6 @@
 package com.br.estudos.Repository;
 
 import com.br.estudos.Dominio.FaseErro;
-import com.br.estudos.Dominio.Items;
-import com.br.estudos.Dominio.Pedido;
 import com.br.estudos.Dominio.RegistroRejeitados;
 import org.springframework.data.jpa.repository.JpaRepository;
 
