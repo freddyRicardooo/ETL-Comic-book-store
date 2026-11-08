@@ -5,6 +5,7 @@ spring:
     password: ${DB_PASSWORD}
   jpa:
     hibernate:
+      open-in-view: false
       ddl-auto: update
   batch:
     jdbc:

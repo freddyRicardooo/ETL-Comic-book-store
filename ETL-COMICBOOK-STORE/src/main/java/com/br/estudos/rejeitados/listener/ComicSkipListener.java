@@ -1,4 +1,4 @@
-package com.br.estudos.rejeitados;
+package com.br.estudos.rejeitados.listener;
 
 import com.br.estudos.rejeitados.model.FaseErro;
 import com.br.estudos.rejeitados.Service.RejeitadoService;

@@ -4,6 +4,8 @@ package com.br.estudos.rejeitados.Service;
 import com.br.estudos.rejeitados.model.FaseErro;
 import com.br.estudos.rejeitados.model.RegistroRejeitados;
 import com.br.estudos.rejeitados.Repository.RegistroRejeitadoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -53,6 +55,19 @@ public class RejeitadoService {
     @Transactional(readOnly = true)
     public List <RegistroRejeitados> listaPorFaseAndTipoRegistro(String tipoRegistro, FaseErro faseErro){
         return registroRejeitadoRepository.findByFaseAndTipoRegistro(faseErro, tipoRegistro);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<RegistroRejeitados> consultar(FaseErro faseErro, String tipo, Pageable pageable){
+        if (faseErro != null && tipo != null) {
+            return registroRejeitadoRepository.findByFaseAndTipoRegistro(faseErro, tipo, pageable);
+        } else if (faseErro != null) {
+            return registroRejeitadoRepository.findByFase(faseErro, pageable);
+        }else if (tipo != null) {
+            return registroRejeitadoRepository.findByTipoRegistro(tipo, pageable);
+        }else {
+            return registroRejeitadoRepository.findAll(pageable);
+        }
     }
 
     //evitar estourar tamanho da coluna no oracle

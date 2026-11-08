@@ -2,7 +2,7 @@ package com.br.estudos.importacao.step;
 
 
 
-import com.br.estudos.rejeitados.ComicSkipListener;
+import com.br.estudos.rejeitados.listener.ComicSkipListener;
 import org.springframework.batch.infrastructure.item.validator.ValidationException;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.Step;
