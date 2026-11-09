@@ -1,5 +1,6 @@
 package com.br.estudos.liquidacao.job;
 
+import com.br.estudos.importacao.listener.JobLogListener;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.parameters.RunIdIncrementer;
@@ -15,10 +16,11 @@ public class LiquidacaoPaniniJobConfig {
     @Bean
     public Job jobLiquidacap(
             JobRepository jobRepository,
-            @Qualifier("vendasQuadrinhasLiquidadasStep") Step stepLiquidacao) {
+            @Qualifier("vendasQuadrinhasLiquidadasStep") Step stepLiquidacao, JobLogListener jobLogListener) {
         return new JobBuilder("jobLiquidacap", jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .start(stepLiquidacao)
+                .listener(jobLogListener)
                 .build();
     }
 }

@@ -1,5 +1,7 @@
 package com.br.estudos.liquidacao.step;
 
+import com.br.estudos.importacao.listener.JobLogListener;
+import com.br.estudos.importacao.listener.ResumoStepListener;
 import com.br.estudos.liquidacao.model.ItemLiquidacaoLeitura;
 import com.br.estudos.liquidacao.model.LiquidacaoPanini;
 import org.springframework.batch.core.repository.JobRepository;
@@ -22,7 +24,7 @@ public class VendasQuadrinhasLiquidadasStepConfig {
             PlatformTransactionManager transactionManager,
             ItemReader<ItemLiquidacaoLeitura> liquidacaoPaniniReader,
             ItemProcessor<ItemLiquidacaoLeitura, LiquidacaoPanini> liquidacaoPaniniProcessor,
-            ItemWriter<LiquidacaoPanini> liquidacaoPaniniWriter) {
+            ItemWriter<LiquidacaoPanini> liquidacaoPaniniWriter, ResumoStepListener resumoStepListener) {
 
         return new StepBuilder("vendasQuadrinhasLiquidadasStep", jobRepository)
                 .<ItemLiquidacaoLeitura, LiquidacaoPanini>chunk(1000)
@@ -30,6 +32,7 @@ public class VendasQuadrinhasLiquidadasStepConfig {
                 .reader(liquidacaoPaniniReader)
                 .processor(liquidacaoPaniniProcessor)
                 .writer(liquidacaoPaniniWriter)
+                .listener(resumoStepListener)
                 .build();
     }
 }

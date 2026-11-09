@@ -1,8 +1,9 @@
-package com.br.estudos.rejeitados.listener;
+package com.br.estudos.importacao.listener;
 
 import com.br.estudos.rejeitados.model.FaseErro;
 import com.br.estudos.rejeitados.Service.RejeitadoService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.listener.SkipListener;
 import org.springframework.batch.infrastructure.item.file.FlatFileParseException;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Component;
  pro service gravar. Nunca chama o listener: o framwork chama
  */
 
-
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ComicSkipListener implements SkipListener<Object, Object> {
@@ -25,24 +26,40 @@ public class ComicSkipListener implements SkipListener<Object, Object> {
     //dispara quando: linha elegivel, campo faltando, falha na leitura. recebe: erro
     public void onSkipInRead(Throwable t) {
         if (t instanceof FlatFileParseException ex){
-            String bruto = ex.getInput(); //texto bruto que reader tentou converter e não conseguiu
-            rejeitadoService.registrar(STEP, FaseErro.LEITURA, extrairTipo(bruto), ex.getLineNumber(), bruto, t);
+            String bruto = ex.getInput();//texto bruto que reader tentou converter e não conseguiu
+            String tipo = extrairTipo(bruto);
+            rejeitadoService.registrar(STEP, FaseErro.LEITURA, tipo, ex.getLineNumber(), bruto, t);
+            registrarLog(FaseErro.LEITURA, tipo, t);
         }else { //Qualquer outra exceção que caia em onSkipInRead não tem esses dados. Não há oq preencher
             rejeitadoService.registrar(STEP, FaseErro.LEITURA, null, null, null, t);
+             registrarLog(FaseErro.LEITURA, null, t);
         }
     }
 
     //dispara quando: processor rejeitou. recebe: item e o erro
     @Override
     public void onSkipInProcess(Object items, Throwable t) {
-        rejeitadoService.registrar(STEP, FaseErro.PROCESSAMENTO, items.getClass().getSimpleName().toUpperCase(), null, String.valueOf(items), t);
+        String tipo = items.getClass().getSimpleName().toUpperCase();
+        rejeitadoService.registrar(STEP, FaseErro.PROCESSAMENTO, tipo, null, String.valueOf(items), t);
+        registrarLog(FaseErro.PROCESSAMENTO, tipo, t);
     }
 
     @Override
     //dispara quando: falha ao gravar no banco. recebe: item e o erro
     public void onSkipInWrite(Object item, Throwable t) {
-        rejeitadoService.registrar(STEP, FaseErro.ESCRITA, item.getClass().getSimpleName().toUpperCase(), null, String.valueOf(item), t);
+        String tipo = item.getClass().getSimpleName().toUpperCase();
+        rejeitadoService.registrar(STEP, FaseErro.ESCRITA, tipo, null, String.valueOf(item), t);
+        registrarLog(FaseErro.ESCRITA, tipo, t);
+    }
 
+    private void registrarLog(FaseErro fase, String tipo, Throwable t) {
+
+        log.debug(
+                "Rejeitado fase={} tipo={} motivo={}",
+                fase,
+                tipo,
+                t.getMessage()
+        );
     }
 
     private String extrairTipo(String linha){

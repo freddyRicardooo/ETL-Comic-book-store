@@ -1,6 +1,7 @@
 package com.br.estudos.importacao.job;
 
 
+import com.br.estudos.importacao.listener.JobLogListener;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.parameters.RunIdIncrementer;
@@ -16,12 +17,13 @@ public class ImportacaoVendasQuadrinhosJobConfig {
     public Job jobImportacao(
             JobRepository jobRepository,
             @Qualifier("importacaoPedidosQuadrinhosStep") Step stepCarga,
-            @Qualifier("vendasQuadrinhasLiquidadasStep") Step stepLiquidacao) {
+            @Qualifier("vendasQuadrinhasLiquidadasStep") Step stepLiquidacao, JobLogListener jobLogListener) {
 
         return new JobBuilder("jobImportacao", jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .start(stepCarga)
                 .next(stepLiquidacao)
+                .listener(jobLogListener)
                 .build();
     }
 }

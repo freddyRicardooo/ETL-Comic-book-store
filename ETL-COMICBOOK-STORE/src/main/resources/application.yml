@@ -13,3 +13,15 @@ spring:
     job:
       name: jobImportacao
       enabled: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+logging:
+  level:
+    root: INFO
+    com.br.estudos: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} %-5level [exec=%X{jobExecutionId}] %logger{20} - %msg%n"

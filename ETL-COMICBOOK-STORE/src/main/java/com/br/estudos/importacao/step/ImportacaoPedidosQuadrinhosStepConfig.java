@@ -2,7 +2,8 @@ package com.br.estudos.importacao.step;
 
 
 
-import com.br.estudos.rejeitados.listener.ComicSkipListener;
+import com.br.estudos.importacao.listener.ComicSkipListener;
+import com.br.estudos.importacao.listener.ResumoStepListener;
 import org.springframework.batch.infrastructure.item.validator.ValidationException;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.Step;
@@ -24,7 +25,7 @@ public class ImportacaoPedidosQuadrinhosStepConfig {
              PlatformTransactionManager transactionManager,
              ItemReader<Object> arquivoVendasQuadrinhosReader,
              ItemProcessor<Object, Object> vendasQuadrinhosClassifierProcessor,
-             ItemWriter<Object> VendasQuadrinhosWriterConfig, ComicSkipListener skipListener) {
+             ItemWriter<Object> VendasQuadrinhosWriterConfig, ComicSkipListener skipListener, ResumoStepListener resumoStepListener) {
 
         return new StepBuilder("stepComicBooks", jobRepository)
                 .chunk(1000).transactionManager(transactionManager)
@@ -38,6 +39,7 @@ public class ImportacaoPedidosQuadrinhosStepConfig {
                 .skip(ValidationException.class)
                 .skipLimit(30000) //maximo de itens pulados no step INTEIRO. Passou de 100 o job falha
                 .listener(skipListener) //registra o listener. daqui em diante toda vez q o batch pular um item chama o ComicSkipListener
+                .listener(resumoStepListener)
                 .build();
     }
 }
