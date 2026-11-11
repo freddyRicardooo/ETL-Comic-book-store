@@ -42,20 +42,6 @@ public class RejeitadoService {
         registroRejeitadoRepository.save(rs);
     }
 
-    @Transactional(readOnly = true)
-    public List<RegistroRejeitados> listaPorFase(FaseErro faseErro){
-        return registroRejeitadoRepository.findByFase(faseErro);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Object> listaPorTipoRegistro(String tipoRegistro){
-        return registroRejeitadoRepository.findByTipoRegistro(tipoRegistro);
-    }
-
-    @Transactional(readOnly = true)
-    public List <RegistroRejeitados> listaPorFaseAndTipoRegistro(String tipoRegistro, FaseErro faseErro){
-        return registroRejeitadoRepository.findByFaseAndTipoRegistro(faseErro, tipoRegistro);
-    }
 
     @Transactional(readOnly = true)
     public Page<RegistroRejeitados> consultar(FaseErro faseErro, String tipo, Pageable pageable){

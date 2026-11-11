@@ -31,7 +31,7 @@ public class RejeitadoController {
     ){
         Page<RegistroRejeitados> pagina = rejeitadoService.consultar(fase, tipo, pageable);
         Page<RejeitadoResponse> paginaDto = pagina.map(this::converter);
-        return new  PagedModel<>(paginaDto);
+        return new PagedModel<>(paginaDto);
     }
 
     private RejeitadoResponse converter(RegistroRejeitados registroRejeitados) {

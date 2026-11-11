@@ -14,14 +14,14 @@ public class ResumoStepListener implements StepExecutionListener {
     @Override
     public ExitStatus afterStep(StepExecution stepExecution) {
 
-        long lidos = stepExecution.getReadCount();
-        long filtrados = stepExecution.getFilterCount();
+        long lidos = stepExecution.getReadCount(); //lidos com sucesso e entregue ao processor
+        long filtrados = stepExecution.getFilterCount(); //itens q o processor retornou null
 
-        long puladosLeitura = stepExecution.getReadSkipCount();
-        long puladosProcessamento = stepExecution.getProcessSkipCount();
-        long puladosEscrita = stepExecution.getWriteSkipCount();
+        long puladosLeitura = stepExecution.getReadSkipCount(); //exceção durante leitura, linha mal formatada ou FlatFileParseException
+        long puladosProcessamento = stepExecution.getProcessSkipCount(); //exceção dentro do processor, item lido com sucesso e descartado pelo processor
+        long puladosEscrita = stepExecution.getWriteSkipCount(); //exceção dentro do writter, item lido e processado mas a gravação falhou
 
-        long gravados = stepExecution.getWriteCount();
+        long gravados = stepExecution.getWriteCount(); //itens que o writer gravou com sucesso
 
         long dif = lidos - (filtrados + puladosProcessamento
                 + puladosEscrita + gravados);
