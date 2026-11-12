@@ -38,7 +38,6 @@ public class ItemsController {
         return new ItemsResponse(
                 items.getId(),
                 items.getIdPedido(),
-                items.getPedido(),
                 items.getSeq(),
                 items.getSku(),
                 items.getTitulo(),

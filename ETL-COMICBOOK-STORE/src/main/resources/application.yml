@@ -6,10 +6,12 @@ spring:
   jpa:
     hibernate:
       open-in-view: false
-      ddl-auto: validate
+      ddl-auto: update
   flyway:
     enabled: true
     locations: classpath:db/migration
+    baseline-on-migrate: true
+    baseline-version: 0
   batch:
     jdbc:
       initialize-schema: always

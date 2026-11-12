@@ -25,13 +25,13 @@ public class ImportacaoPedidosQuadrinhosStepConfig {
              PlatformTransactionManager transactionManager,
              ItemReader<Object> arquivoVendasQuadrinhosReader,
              ItemProcessor<Object, Object> vendasQuadrinhosClassifierProcessor,
-             ItemWriter<Object> VendasQuadrinhosWriterConfig, ComicSkipListener skipListener, ResumoStepListener resumoStepListener) {
+             ItemWriter<Object> vendasQuadrinhosDatabaseWriter, ComicSkipListener skipListener, ResumoStepListener resumoStepListener) {
 
         return new StepBuilder("stepComicBooks", jobRepository)
                 .chunk(1000).transactionManager(transactionManager)
                 .reader(arquivoVendasQuadrinhosReader)
                 .processor(vendasQuadrinhosClassifierProcessor)
-                .writer(VendasQuadrinhosWriterConfig)
+                .writer(vendasQuadrinhosDatabaseWriter)
                 .faultTolerant() //modo tolerante a falhas. Sem ele a primeira linha ruim derruba o job
                 .processorNonTransactional() //processor não é transacional guarde o resultado e não reprocesse
                 .skip(FlatFileParseException.class) //permite pular linhas que o reader não conseguiu ler

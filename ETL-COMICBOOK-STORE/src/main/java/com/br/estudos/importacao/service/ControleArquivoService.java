@@ -27,7 +27,7 @@ public class ControleArquivoService {
      *
      * Se o hash já existir:
      * - O Oracle rejeita a inserção por causa da restrição UNIQUE.
-     * - Capturamos a DuplicateKeyException.
+     * - Captura a DuplicateKeyException.
      * - Tentamos atualizar o registro existente somente se
      *   seu status atual for ERRO.
      *

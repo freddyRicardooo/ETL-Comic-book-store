@@ -1,62 +1,30 @@
 package com.br.estudos.importacao.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import org.hibernate.annotations.Immutable;
 
 import java.math.BigDecimal;
-
 @Data
 @Entity
+@Immutable                       // org.hibernate.annotations.Immutable: o Hibernate nunca grava
 @Table(name = "ITEM_PEDIDO")
 public class Items {
-    // O arquivo não traz id único por item: o banco gera a chave (via sequence)
+
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "item_pedido_seq")
-    @SequenceGenerator(name = "item_pedido_seq", sequenceName = "ITEM_PEDIDO_SEQ", allocationSize = 50)
     @Column(name = "ID")
-    private Long id;
+    private Long id;             // sem @GeneratedValue: quem gera é o banco (identity)
 
-    // Coluna que recebe o id do pedido vindo do arquivo (ex.: P000001)
-    @NotNull
-    @Column(name = "ID_PEDIDO", length = 20)
-    private String idPedido;
-
-    // FK: cada item pertence a um pedido (N itens -> 1 pedido)
-    @ManyToOne(fetch = FetchType.LAZY) //carrega o pedido só quando acessado
-    //diz ao jpa que o pedido não escreve nessa coluna só le, sem isso o hibernate alerta de column mapeada 2x
-    @JoinColumn(name = "ID_PEDIDO", insertable = false, updatable = false)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private Pedido pedido;
-
-    @NotNull
-    @Column(name = "SEQ")
-    private Integer seq;
-
-    @NotNull
-    @Column(name = "SKU", length = 20)
-    private String sku;
-
-    @NotNull
-    @Column(name = "TITULO", length = 150)
-    private String titulo;
-
-    @NotNull
-    @Column(name = "EDITORA", length = 100)
-    private String editora;
-
-    @NotNull
-    @Column(name = "QTD")
-    private Integer qtd;
-
-    @NotNull
-    @Column(name = "PRECO_UNITARIO", precision = 10, scale = 2)
-    private BigDecimal precoUnitario;
-
-    @NotNull
-    @Column(name = "VALOR_ITEM", precision = 12, scale = 2)
-    private BigDecimal valorItem;
+    @NotNull @Column(name = "ID_PEDIDO") private String idPedido;
+    @NotNull @Column(name = "SEQ")       private Integer seq;
+    @NotNull @Column(name = "SKU")       private String sku;
+    @NotNull @Column(name = "TITULO")    private String titulo;
+    @NotNull @Column(name = "EDITORA")   private String editora;
+    @NotNull @Column(name = "QTD")       private Integer qtd;
+    @NotNull @Column(name = "PRECO_UNITARIO") private BigDecimal precoUnitario;
+    @NotNull @Column(name = "VALOR_ITEM")     private BigDecimal valorItem;
 }
