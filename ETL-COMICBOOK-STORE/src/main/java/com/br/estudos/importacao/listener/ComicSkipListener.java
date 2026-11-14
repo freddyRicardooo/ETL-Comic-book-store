@@ -28,7 +28,7 @@ public class ComicSkipListener implements SkipListener<Object, Object> {
         if (t instanceof FlatFileParseException ex){
             String bruto = ex.getInput();//texto bruto que reader tentou converter e não conseguiu
             String tipo = extrairTipo(bruto);
-            rejeitadoService.registrar(STEP, FaseErro.LEITURA, tipo, ex.getLineNumber(), bruto, t);
+            rejeitadoService.registrar(STEP, FaseErro.LEITURA, tipo, Long.valueOf(ex.getLineNumber()), bruto, t);
             registrarLog(FaseErro.LEITURA, tipo, t);
         }else { //Qualquer outra exceção que caia em onSkipInRead não tem esses dados. Não há oq preencher
             rejeitadoService.registrar(STEP, FaseErro.LEITURA, null, null, null, t);
