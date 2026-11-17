@@ -14,11 +14,9 @@ spring:
     job:
       name: jobImportacao
       enabled: true
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics
+
+importacao:
+  diretorio: C:/Arquivo Comic Book
 
 logging:
   level:

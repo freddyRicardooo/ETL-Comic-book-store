@@ -1,6 +1,6 @@
 package com.br.estudos.liquidacao.model;
 
-import jakarta.persistence.*;
+
 import lombok.Data;
 
 import java.math.BigDecimal;

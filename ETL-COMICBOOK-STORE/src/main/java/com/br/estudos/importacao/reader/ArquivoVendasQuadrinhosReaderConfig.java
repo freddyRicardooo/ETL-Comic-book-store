@@ -7,7 +7,8 @@ import org.springframework.batch.infrastructure.item.file.builder.FlatFileItemRe
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
+import org.springframework.core.io.FileSystemResource;
+import java.nio.file.Path;
 
 @Configuration
 public class ArquivoVendasQuadrinhosReaderConfig {
@@ -15,12 +16,15 @@ public class ArquivoVendasQuadrinhosReaderConfig {
     @StepScope
     @Bean
     public FlatFileItemReader arquivoVendasQuadrinhosReader(
-            @Value("#{jobParameters['arquivoComicBook'] ?: 'file:files/ArquivoComicBookStore.txt'}")
-            Resource arquivoVendasQuadrinhosReader,
+            @Value("${importacao.diretorio}") String diretorio,
+            @Value("#{jobParameters['arquivoComicBook'] ?: 'ArquivoComicBookStore.txt'}")
+            String ArquivoComicBookStore,
             LineMapper lineMapper) {
+
+        Path caminho = Path.of(diretorio, ArquivoComicBookStore);
         return new FlatFileItemReaderBuilder()
                 .name("arquivoVendasQuadrinhosReader")
-                .resource(arquivoVendasQuadrinhosReader)
+                .resource(new FileSystemResource(caminho))
                 .lineMapper(lineMapper)
                 .build();
     }

@@ -1,5 +1,4 @@
 package com.br.estudos.importacao.tasklet;
-
 import com.br.estudos.importacao.service.ControleArquivoService;
 import com.br.estudos.importacao.service.HashArquivoService;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -9,7 +8,6 @@ import org.springframework.batch.core.step.StepContribution;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.infrastructure.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
@@ -20,30 +18,29 @@ public class RegistrarArquivoTasklet implements Tasklet {
 
     private final HashArquivoService hashArquivoService;
     private final ControleArquivoService controleArquivoService;
-    private final Resource arquivo;
+    private final Path caminho;
 
     public RegistrarArquivoTasklet(
             HashArquivoService hashService,
             ControleArquivoService controleService,
-            @Value("#{jobParameters['arquivoComicBook'] ?: 'file:files/ArquivoComicBookStore.txt'}")
-            Resource arquivo) {
+            @Value("${importacao.diretorio}") String diretorio,
+            @Value("#{jobParameters['arquivoComicBook'] ?: 'ArquivoComicBookStore.txt'}")
+            String arquivo) {
         this.hashArquivoService = hashService;
         this.controleArquivoService = controleService;
-        this.arquivo = arquivo;
+        this.caminho = Path.of(diretorio, arquivo);
     }
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 
         JobExecution jobExecution = contribution.getStepExecution().getJobExecution();
-
-        Path path = arquivo.getFile().toPath();
-        String hash = hashArquivoService.calcularHash(path);
+        String hash = hashArquivoService.calcularHash(caminho);
 
         // se o arquivo estiver bloqueado, lança exceção aqui e o job para
         controleArquivoService.iniciarProcessamento(
                 hash,
-                path.getFileName().toString(),
+                caminho.getFileName().toString(),
                 jobExecution.getId()
         );
 

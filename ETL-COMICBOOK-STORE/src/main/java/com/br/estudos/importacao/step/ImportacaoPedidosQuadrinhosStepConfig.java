@@ -37,7 +37,7 @@ public class ImportacaoPedidosQuadrinhosStepConfig {
                 .skip(FlatFileParseException.class) //permite pular linhas que o reader não conseguiu ler
                 .skip(DataIntegrityViolationException.class) //permite pular itens q o banco recusou
                 .skip(ValidationException.class)
-                .skipLimit(30000) //maximo de itens pulados no step INTEIRO. Passou de 100 o job falha
+                .skipLimit(30000) //maximo de itens pulados no step INTEIRO. Passou de 30000 o job falha
                 .listener(skipListener) //registra o listener. daqui em diante toda vez q o batch pular um item chama o ComicSkipListener
                 .listener(resumoStepListener)
                 .build();
