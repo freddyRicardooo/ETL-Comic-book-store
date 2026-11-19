@@ -5,14 +5,18 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class HashArquivoTest {
 
-    @TempDir //disponibiliza um diretório temporário para os testes
+    // @TempDir: o JUnit cria uma pasta temporária para os testes e apaga no fim
+    @TempDir
     Path diretorioTemporario;
 
     private final HashArquivoService hashArquivoService = new HashArquivoService();
 
+    // @Test: marca o método como teste.
+    // Dois arquivos com o mesmo conteúdo devem gerar o mesmo hash.
     @Test
     void deveGerarMesmoHashParaArquivosComMesmoConteudo() throws IOException {
 
@@ -25,12 +29,11 @@ public class HashArquivoTest {
         String hash1 = hashArquivoService.calcularHash(arquivo1);
         String hash2 = hashArquivoService.calcularHash(arquivo2);
 
-        System.out.println("Hash 1: " + hash1);
-        System.out.println("Hash 1: " + hash2);
         assertEquals(hash1, hash2);
     }
 
 
+    // Conteúdos diferentes devem gerar hashes diferentes.
     @Test
     void deveGerarHashDiferentesParaConteudosDiferentes() throws IOException {
 
@@ -43,12 +46,26 @@ public class HashArquivoTest {
 
         String hash1 = hashArquivoService.calcularHash(arquivo1);
         String hash2 = hashArquivoService.calcularHash(arquivo2);
-        System.out.println("Hash 1: " + hash1);
-        System.out.println("Hash 2: " + hash2);
 
+        assertNotEquals(hash1, hash2);
+    }
+
+    // Compara com um valor oficial conhecido (SHA-256 de entrada vazia),
+    // em vez de só comparar dois hashes entre si.
+    @Test
+    void deveGerarHashConhecidoParaArquivoVazio() throws IOException {
+
+        Path arquivo = diretorioTemporario.resolve("vazio.txt");
+        Files.writeString(arquivo, "");
+
+        String hash = hashArquivoService.calcularHash(arquivo);
+
+        // valor publicado para SHA-256 de entrada vazia
+        assertEquals("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", hash);
     }
 
 
+    // SHA-256 em hexadecimal sempre tem 64 caracteres.
     @Test
     void deveGerarHashCom64Caracteres()
             throws IOException {
@@ -63,4 +80,3 @@ public class HashArquivoTest {
         assertEquals(64, hash.length());
     }
 }
-

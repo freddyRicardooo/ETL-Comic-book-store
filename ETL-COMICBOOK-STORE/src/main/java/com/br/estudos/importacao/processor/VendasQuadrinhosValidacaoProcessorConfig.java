@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
-public class VendasQuadrinhosValidacaoProcessorConfig {
+public class    VendasQuadrinhosValidacaoProcessorConfig {
 
     // Teto do frete
     private static final BigDecimal FRETE_MAXIMO = new BigDecimal("20.00");
