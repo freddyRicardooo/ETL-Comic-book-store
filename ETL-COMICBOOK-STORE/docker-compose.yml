@@ -1,0 +1,38 @@
+# Sobe dois "containers": o Oracle (banco) e a aplicação (o job Spring Batch).
+# Comandos: docker compose up --build   |   docker compose down
+services:
+
+  oracle:
+    image: gvenzl/oracle-free:23-slim-faststart   # Oracle Free já pronto, versão leve
+    container_name: comic-oracle
+    environment:
+      ORACLE_PASSWORD: ${ORACLE_PASSWORD}     # senha do usuário administrador (SYS)
+      APP_USER: ${DB_USER}                    # a imagem cria este usuário pra nossa app
+      APP_USER_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "1522:1521"                           # PC:container -> sua IDE continua usando localhost:1522
+    volumes:
+      - oracle-data:/opt/oracle/oradata       # guarda os dados mesmo se o container for apagado
+    healthcheck:                              # "o banco já está pronto pra receber conexão?"
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  app:
+    build: .                                  # monta a imagem usando o Dockerfile desta pasta
+    container_name: comic-etl
+    depends_on:
+      oracle:
+        condition: service_healthy            # só inicia a app quando o Oracle estiver saudável
+    environment:
+      DB_URL: jdbc:oracle:thin:@//oracle:1521/FREEPDB1   # "oracle" = nome do serviço acima
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      IMPORTACAO_DIRETORIO: /dados            # caminho DENTRO do container
+    volumes:
+      - ${ARQUIVOS_DIR}:/dados:ro             # pasta do seu PC -> /dados (somente leitura)
+
+volumes:
+  oracle-data:

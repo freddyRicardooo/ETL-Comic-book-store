@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:oracle:thin:@//localhost:1522/FREEPDB1
+    url: ${DB_URL:jdbc:oracle:thin:@//localhost:1522/FREEPDB1}
     username: ${DB_USER}
     password: ${DB_PASSWORD}
   flyway:
@@ -16,7 +16,7 @@ spring:
       enabled: true
 
 importacao:
-  diretorio: C:/Arquivo Comic Book
+  diretorio: ${IMPORTACAO_DIRETORIO:C:/Arquivo Comic Book}
 
 logging:
   level:
