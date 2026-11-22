@@ -113,22 +113,33 @@ Nesse modo o arquivo é lido de `C:/Arquivo Comic Book` (propriedade `importacao
 
 ## Arquivo de teste
 
-Baixe o arquivo de exemplo: [ArquivoComicBookStore.txt](ETL-COMICBOOK-STORE/exemplo/ArquivoComicBookStore.txt) (na página do arquivo no GitHub, use o botão de download).
+Há dois arquivos de exemplo na pasta [`ETL-COMICBOOK-STORE/exemplo`](ETL-COMICBOOK-STORE/exemplo):
+
+| Arquivo | Linhas | Uso |
+|---|---|---|
+| [ArquivoComicBookStore.txt](ETL-COMICBOOK-STORE/exemplo/ArquivoComicBookStore.txt) | 3000 | Carga completa, com registros válidos e inválidos misturados |
+| [ArquivoComicBookStore_pequeno.txt](ETL-COMICBOOK-STORE/exemplo/ArquivoComicBookStore_pequeno.txt) | 15 | Conferência rápida, um caso de rejeição por regra |
+
+Na página do arquivo no GitHub, use o botão de download.
 
 Para usar:
 
-1. Salve o arquivo com o nome `ArquivoComicBookStore.txt`.
+1. Baixe o arquivo. Se usar o pequeno, renomeie para `ArquivoComicBookStore.txt`.
 2. Coloque-o na pasta definida em `ARQUIVOS_DIR` no `.env` (ou em `C:/Arquivo Comic Book` se rodar sem Docker).
 3. Execute o projeto.
 
-Resultado esperado com esse arquivo:
+Resultado esperado com o arquivo de 3000 linhas:
 
 | Tabela | Conteúdo |
 |---|---|
-| `PEDIDO` | 4 pedidos (1001 a 1004) |
-| `ITEM_PEDIDO` | 6 itens |
-| `REGISTROS_REJEITADOS` | 7 registros: pedido 1005 (PIX), 1006 (não entregue), 1007 (frete acima do teto), 1001 repetido, e os itens órfãos desses três pedidos |
-| `LIQUIDACAO_PANINI` | 5 itens da Panini liquidados |
+| `PEDIDO` | 907 pedidos |
+| `ITEM_PEDIDO` | 1777 itens |
+| `REGISTROS_REJEITADOS` | 316 registros |
+| `LIQUIDACAO_PANINI` | 956 itens da Panini |
+
+Motivos das 316 rejeições: item sem pedido válido (154), status não entregue ou cancelado (38), item com preço zerado (35), pedido duplicado (23), item duplicado (23), pagamento PIX (19), frete acima do teto (13) e e-mail ausente (11).
+
+Resultado esperado com o arquivo pequeno: 4 pedidos, 6 itens, 7 rejeitados e 5 itens da Panini.
 
 Para repetir a execução com o mesmo arquivo, veja [Reprocessamento](#reprocessamento).
 
